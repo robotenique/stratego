@@ -12,7 +12,8 @@ func _ready():
 	set_fixed_process(true)
 	
 
-func _input(event):
-	if(event.is_action("ui_accept")):		
-		get_tree().change_scene("res://regras.scn")
 
+
+
+func _on_RegrasBtn_pressed():
+	get_tree().change_scene("res://regras.scn")
