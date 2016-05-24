@@ -17,3 +17,11 @@ func _ready():
 
 func _on_RegrasBtn_pressed():
 	get_tree().change_scene("res://regras.scn")
+
+
+func _on_QuitBtn_pressed():
+	 get_tree().quit()
+
+
+func _on_PlayBtn_pressed():
+	get_tree().change_scene("res://jogo1.scn")
