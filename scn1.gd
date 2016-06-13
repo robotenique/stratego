@@ -8,8 +8,7 @@ extends Control
 #var current_scene = get_tree().get_current_scene()
     
 func _ready():	
-	set_process_input(true)
-	set_fixed_process(true)
+	pass
 	
 
 

@@ -11,7 +11,9 @@ extends TextureButton
 func get_drag_data(pos):
 	#Player hardCoded
 	#var player = getPlayer()
-	var player = 1
+	var pLabel = get_tree().get_root().get_node("Control/PlayerLabel")
+	var player = int(pLabel.get_text()[7])	
+	
 	var cpb = TextureButton.new()
 	cpb.set_normal_texture(get_normal_texture())
 	set_drag_preview(cpb)
@@ -29,6 +31,7 @@ func get_drag_data(pos):
 
 func can_drop_data(pos, data,linhaDestino):
 	var isButton = typeof(data[0])==18	
+	#Verificando para player1
 	if data[3]==1:	
 		#PEÇA ---> TABULEIRO
 		if data[2][0]=="p":
@@ -55,5 +58,4 @@ func drop_data(pos, data):
 		var btn = get_parent().get_child(int(nome[1]))	
 		var txtDestino = btn.get_normal_texture()
 		self.set_normal_texture(data[1])
-		print(txtDestino)
 		data[0].set_normal_texture(txtDestino)
