@@ -30,6 +30,8 @@ func get_drag_data(pos):
 
 
 func can_drop_data(pos, data,linhaDestino):
+	var t = Globals.get("tt")
+	print(t)
 	var isButton = typeof(data[0])==18	
 	#Verificando para player1
 	if data[3]==1:	
