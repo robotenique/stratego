@@ -11,6 +11,7 @@ var pPopError = 0
 var mTab = []
 var tt = "KAKAKAKAKAKJ"
 var criado = false
+var pronto = false
 
 
 func _ready():
@@ -32,32 +33,10 @@ func _on_MudarPlayerBtn_pressed():
 	pPop = get_node("MudarPlayerBtn/confirmacao")
 	pPopError = get_node("MudarPlayerBtn/erroDialog")
 	var player = int(pLabel.get_text()[7])
-	
-	
-	
-	
-	
 	if verificaTab(player):
-	#CRIANDO TABULEIRO	
-	#O B DEVERIA SER UMA VARIAVEL STATIC P/ EXECUTAR A CRIAÇÃO DO TABULEIRO APENAS UMA VEZ!
-		if(player==1 and not criado):
-			criado = true
-			for i in range(10):
-				mTab.append([])
-				for j in range(10):			
-					mTab[i][j].append([load("res://tile.png"),get_node(str("tabuleiro/linha",i,"/p",j)),0])
-			for i in range(6,10):
-				for j in range(10):
-					mTab[i][j][0] = mTab[i][j][1].get_normal_texture()
-					mTab[i][j][2] = 1;
-					
-		fechaTab()
-		pPop.popup_centered()		
+		pPop.popup_centered()
 	else:
 		pPopError.popup_centered()
-		
-		
-		
 	
 #func fechaTab(player):
 #	if(player==1):
@@ -95,10 +74,31 @@ func fechaTab():
 
 	
 func _on_confirmacao_confirmed():
-	pLabel.set_text("Player 2")
-	pLabel.set("custom_colors/font_color", Color(1,0,0))
-	pConf.set_text("Começar jogo!")
-	pPop.set_text("Iniciar jogo agora?!")
+	var popup2 = get_node("MudarPlayerBtn/conf2")
+	var pLabel = get_node("PlayerLabel")
+	var player = int(pLabel.get_text()[7])	
+	#CRIANDO TABULEIRO	
+	#O B DEVERIA SER UMA VARIAVEL STATIC P/ EXECUTAR A CRIAÇÃO DO TABULEIRO APENAS UMA VEZ!
+	if (not pronto):
+		if (not criado):
+			for i in range(10):
+				mTab.append([])
+				for j in range(10):
+					mTab[i][j].append([load("res://tile.png"),get_node(str("tabuleiro/linha",i,"/p",j)),0])
+			criado = true
+		if(player==1):
+			for i in range(6,10):
+				for j in range(10):
+					mTab[i][j][0] = mTab[i][j][1].get_normal_texture()
+					mTab[i][j][2] = 1;
+		if(player==2):
+			for i in range(0,4):
+				for j in range(10):
+					mTab[i][j][0] = mTab[i][j][1].get_normal_texture()
+					mTab[i][j][2] = 2;
+			pronto = true
+	fechaTab()
+	popup2.popup_centered()
 
 
 func verificaTab(player):
@@ -142,3 +142,16 @@ func _on_rND_pressed():
 			
 	
 		
+
+
+func _on_conf2_confirmed():
+	pLabel.set_text("Player 2")
+	pLabel.set("custom_colors/font_color", Color(1,0,0))
+	pConf.set_text("Começar jogo!")
+	pPop.set_text("Iniciar jogo agora?!")
+	#TODO: ADICIONAR PEÇAS DO PLAYER 2
+
+	for i in range(1,41):
+		listTextures.append(get_node(str("pecas",i,"/peca1")).get_normal_texture())
+		get_node(str("pecas",i,"/peca1")).set_normal_texture(load("res://tile.png"))
+
