@@ -10,12 +10,12 @@ var pPop = 0
 var pPopError = 0
 var mTab = []
 var tt = "KAKAKAKAKAKJ"
-var b = "1"
+var criado = false
 
 
 func _ready():
 	tt = "OI"
-	Globals.set(b,"1")
+
 	
 func _on_VoltarBtn_pressed():
 	get_tree().change_scene("res://title1.scn")
@@ -39,17 +39,19 @@ func _on_MudarPlayerBtn_pressed():
 	
 	if verificaTab(player):
 	#CRIANDO TABULEIRO	
-		if(player==1 and b=="1"):
-			b = "WOL"
+	#O B DEVERIA SER UMA VARIAVEL STATIC P/ EXECUTAR A CRIAÇÃO DO TABULEIRO APENAS UMA VEZ!
+		if(player==1 and not criado):
+			criado = true
 			for i in range(10):
 				mTab.append([])
-				for j in range(10):	#		
-					mTab[i].append([load("res://tile.png"),get_node(str("tabuleiro/linha",i,"/p",j)),0])
-			for i in range(10):
+				for j in range(10):			
+					mTab[i][j].append([load("res://tile.png"),get_node(str("tabuleiro/linha",i,"/p",j)),0])
+			for i in range(6,10):
 				for j in range(10):
-					print(mTab[i][j][1])
-					print("oi")
-			
+					mTab[i][j][0] = mTab[i][j][1].get_normal_texture()
+					mTab[i][j][2] = 1;
+					
+		fechaTab()
 		pPop.popup_centered()		
 	else:
 		pPopError.popup_centered()
@@ -57,21 +59,42 @@ func _on_MudarPlayerBtn_pressed():
 		
 		
 	
-func fechaTab(player):
-	var tNeutra = load("res://pneutral.jpg")
-	var tab = 0	
-	if player==1:
-		tab = [get_node("tabuleiro/linha6"),get_node("tabuleiro/linha7"),get_node("tabuleiro/linha8"),get_node("tabuleiro/linha9")]
-	else:
-		tab = [get_node("tabuleiro/linha0"),get_node("tabuleiro/linha1"),get_node("tabuleiro/linha2"),get_node("tabuleiro/linha3")]
-	for linha in tab:
-		for p in range(10):
-			linha.get_child(p).set_normal_texture(tNeutra)
+#func fechaTab(player):
+#	if(player==1):
+#		var tNeutra = load("res://pneutral.jpg")
+#		tab = [get_node("tabuleiro/linha6"),get_node("tabuleiro/linha7"),get_node("tabuleiro/linha8"),get_node("tabuleiro/linha9")]
+#	elif(player==2):
+#		var tNeutra = load("res://pneutral.jpg")
+#		tab = [get_node("tabuleiro/linha0"),get_node("tabuleiro/linha1"),get_node("tabuleiro/linha2"),get_node("tabuleiro/linha3")]
+#	var tab = 0		
+#	for linha in tab:
+#		for p in range(10):
+#			linha.get_child(p).set_normal_texture(tNeutra)
+
+func abreTab(player):
+	if(player==1):
+		for i in range(10):
+			for j in range(10):
+				if(mTab[i][j][2]==1):
+					mTab[i][j][1].set_normal_texture(mTab[i][j][0])
+	#TODO PLAYER 2
+			
+
+func fechaTab():
+	var tNeutra1 = load("res://pneutral.jpg")
+	var tNeutra2 = load("res://stalindo.jpg")
+	for i in range(10):
+		for j in range(10):
+			if(mTab[i][j][2]==1):
+				mTab[i][j][1].set_normal_texture(tNeutra1)
+			elif(mTab[i][j][2]==2):
+				mTab[i][j][1].set_normal_texture(tNeutra2)
+			
 	
 	
 
 	
-func _on_confirmacao_confirmed():	
+func _on_confirmacao_confirmed():
 	pLabel.set_text("Player 2")
 	pLabel.set("custom_colors/font_color", Color(1,0,0))
 	pConf.set_text("Começar jogo!")
@@ -105,9 +128,6 @@ func _on_rND_pressed():
 		mTab.append([])
 		for j in range(10):	#		
 			mTab[i].append([load("res://tile.png"),get_node(str("tabuleiro/linha",i,"/p",j)),0])
-	for i in range(10):
-		for j in range(10):
-			print(mTab[i][j][1])
 
 					
 	var t = [];
