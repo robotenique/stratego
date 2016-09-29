@@ -75,3 +75,22 @@ func drop_data(pos, data):
 		var txtDestino = btn.get_normal_texture()
 		self.set_normal_texture(data[1])
 		data[0].set_normal_texture(txtDestino)
+
+'''
+@TODO: IMPLEMENTAR can_drop_data p/ game_loop()
+limitações:
+if peca pertence à player:
+	if not (bomba, flag)
+		if mov->tabuleiro:
+			if posDestino pertence ao quadrado de vizinhança:
+				if posDestino == inimigo:
+					return combate(pecaAtual,pecaDestino)
+				elif posDestino == vazio:
+					return move(peca, posDestino)					
+			elif é scout && movScoutÉválido(peca):
+				if posDestino == inimigo:
+					return combate(pecaAtual,pecaDestino)
+				elif posDestino == vazio:
+					return move(peca, posDestino)	
+
+return false
