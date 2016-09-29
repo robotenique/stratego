@@ -50,8 +50,22 @@ func can_drop_data(pos, data,linhaDestino):
 			elif int(linhaDestino[5])>5:
 				return isButton
 	else:
-		return int(data[2][5])<4 and isButton
-	
+		#PEÇA ---> TABULEIRO
+		if data[2][0]=="p":
+			if linhaDestino[0] != "p":
+				if int(linhaDestino[5]) < 4:
+					return isButton
+			return false
+		#TABULEIRO --> X
+		elif int(data[2][5]) < 4:
+			#Tabuleiro ---> Peça
+			if linhaDestino[0] == "p":
+					return isButton
+			#Tabuleiro --> Tabuleiro
+			elif int(linhaDestino[5]) < 4:
+				return isButton
+
+
 
 
 func drop_data(pos, data):

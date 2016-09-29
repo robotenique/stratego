@@ -27,7 +27,7 @@ func _on_MudarPlayerBtn_pressed():
 	#var sd = get_node("MudarPlayerBtn/PopupMenu")
 	#sd.add_icon_item(load("res://p1.png"),"ATTAAAAAA")
 	#sd.popup_centered()
-	
+	print("MUDOU")
 	pLabel = get_node("PlayerLabel")
 	pConf = get_node("MudarPlayerBtn")
 	pPop = get_node("MudarPlayerBtn/confirmacao")
@@ -150,8 +150,27 @@ func _on_conf2_confirmed():
 	pConf.set_text("Começar jogo!")
 	pPop.set_text("Iniciar jogo agora?!")
 	#TODO: ADICIONAR PEÇAS DO PLAYER 2
+	get_node(str("pecas1/peca1")).set_normal_texture(load("res://qF.png"))
+	get_node(str("pecas2/peca1")).set_normal_texture(load("res://q1.png"))
+	get_node(str("pecas3/peca1")).set_normal_texture(load("res://q9.png"))
+	get_node(str("pecas4/peca1")).set_normal_texture(load("res://stalindo.jpg"))
 
-	for i in range(1,41):
-		listTextures.append(get_node(str("pecas",i,"/peca1")).get_normal_texture())
-		get_node(str("pecas",i,"/peca1")).set_normal_texture(load("res://tile.png"))
+	for i in range(5,7):
+		get_node(str("pecas",i,"/peca1")).set_normal_texture(load("res://q8.png"))
+	for i in range(7,10):
+		get_node(str("pecas",i,"/peca1")).set_normal_texture(load("res://q7.png"))
+	for i in range(10,14):
+		get_node(str("pecas",i,"/peca1")).set_normal_texture(load("res://q6.png"))
+	for i in range(14,18):
+		get_node(str("pecas",i,"/peca1")).set_normal_texture(load("res://q5.png"))
+	for i in range(18,22):
+		get_node(str("pecas",i,"/peca1")).set_normal_texture(load("res://q4.png"))
+	for i in range(22,27):
+		get_node(str("pecas",i,"/peca1")).set_normal_texture(load("res://q3.png"))
+	for i in range(27,35):
+		get_node(str("pecas",i,"/peca1")).set_normal_texture(load("res://q2.png"))
+	for i in range(35,41):
+		get_node(str("pecas",i,"/peca1")).set_normal_texture(load("res://qB.png"))
+	
+
 
