@@ -8,15 +8,14 @@ var pLabel = 0
 var pConf = 0
 var pPop = 0
 var pPopError = 0
-var mTab = []
+
 var tt = "KAKAKAKAKAKJ"
 var criado = false
 var pronto = false
-var gIsOn = false
 
 
 func _ready():
-	tt = "OI"
+	pass
 
 	
 func _on_VoltarBtn_pressed():
@@ -40,23 +39,13 @@ func _on_MudarPlayerBtn_pressed():
 		pPopError.popup_centered()
 		
 	
-#func fechaTab(player):
-#	if(player==1):
-#		var tNeutra = load("res://pneutral.jpg")
-#		tab = [get_node("tabuleiro/linha6"),get_node("tabuleiro/linha7"),get_node("tabuleiro/linha8"),get_node("tabuleiro/linha9")]
-#	elif(player==2):
-#		var tNeutra = load("res://pneutral.jpg")
-#		tab = [get_node("tabuleiro/linha0"),get_node("tabuleiro/linha1"),get_node("tabuleiro/linha2"),get_node("tabuleiro/linha3")]
-#	var tab = 0		
-#	for linha in tab:
-#		for p in range(10):
-#			linha.get_child(p).set_normal_texture(tNeutra)
+
 
 func abreTab(player):	
 	for i in range(10):
 		for j in range(10):
-			if(mTab[i][j][2]==player):
-				mTab[i][j][1].set_normal_texture(mTab[i][j][0])
+			if(global.mTab[i][j][2]==player):
+				global.mTab[i][j][1].set_normal_texture(global.mTab[i][j][0])
 			
 
 func fechaTab():
@@ -64,10 +53,10 @@ func fechaTab():
 	var tNeutra2 = load("res://qneutral.jpg")
 	for i in range(10):
 		for j in range(10):
-			if(mTab[i][j][2]==1):
-				mTab[i][j][1].set_normal_texture(tNeutra1)
-			elif(mTab[i][j][2]==2):
-				mTab[i][j][1].set_normal_texture(tNeutra2)
+			if(global.mTab[i][j][2]==1):
+				global.mTab[i][j][1].set_normal_texture(tNeutra1)
+			elif(global.mTab[i][j][2]==2):
+				global.mTab[i][j][1].set_normal_texture(tNeutra2)
 			
 	
 	
@@ -82,20 +71,20 @@ func _on_confirmacao_confirmed():
 	if (not pronto):
 		if (not criado):
 			for i in range(10):
-				mTab.append([])
+				global.mTab.append([])
 				for j in range(10):
-					mTab[i][j].append([load("res://tile.png"),get_node(str("tabuleiro/linha",i,"/p",j)),0])
+					global.mTab[i][j].append([load("res://tile.png"), get_node(str("tabuleiro/linha",i,"/p",j)), 0])
 			criado = true
 		if(player==1):
 			for i in range(6,10):
 				for j in range(10):
-					mTab[i][j][0] = mTab[i][j][1].get_normal_texture()
-					mTab[i][j][2] = 1;
+					global.mTab[i][j][0] = global.mTab[i][j][1].get_normal_texture()
+					global.mTab[i][j][2] = 1;
 		if(player==2):
 			for i in range(0,4):
 				for j in range(10):
-					mTab[i][j][0] = mTab[i][j][1].get_normal_texture()
-					mTab[i][j][2] = 2;
+					global.mTab[i][j][0] = global.mTab[i][j][1].get_normal_texture()
+					global.mTab[i][j][2] = 2;
 					popup2.set_text("Passe para o player 1! \nO jogo vai começar!")
 			pronto = true
 	fechaTab()
@@ -122,17 +111,14 @@ func _on_erroDialog_confirmed():
 func _on_PopupMenu_item_pressed( ID ):	
 	print("ATA")
 
-func get_mTab():
-	return mTab
-
 func _on_rND_pressed():	
 	var pLabel = get_node("PlayerLabel")
 	var player = int(pLabel.get_text()[7])	
 	if player == 1:
 		for i in range(10):
-			mTab.append([])
+			global.mTab.append([])
 			for j in range(10):
-				mTab[i].append([load("res://tile.png"),get_node(str("tabuleiro/linha",i,"/p",j)),0])
+				global.mTab[i].append([load("res://tile.png"),get_node(str("tabuleiro/linha",i,"/p",j)),0])
 
 		var t = [];
 		for i in range(1,41):
@@ -141,13 +127,13 @@ func _on_rND_pressed():
 		var k = 0	
 		for i in range(9,5,-1):
 			for j in range(10):
-				mTab[i][j][1].set_normal_texture(t[k])
+				global.mTab[i][j][1].set_normal_texture(t[k])
 				k += 1
 	else:
 		for i in range(10):
-			mTab.append([])
+			global.mTab.append([])
 			for j in range(10):
-				mTab[i].append([load("res://tile.png"),get_node(str("tabuleiro/linha",i,"/p",j)),0])
+				global.mTab[i].append([load("res://tile.png"),get_node(str("tabuleiro/linha",i,"/p",j)),0])
 		var t = [];
 		for i in range(1,41):
 			t.append(get_node(str("pecas",i,"/peca1")).get_normal_texture())
@@ -155,7 +141,7 @@ func _on_rND_pressed():
 		var k = 0	
 		for i in range(0,4):
 			for j in range(10):
-				mTab[i][j][1].set_normal_texture(t[k])
+				global.mTab[i][j][1].set_normal_texture(t[k])
 				k += 1
 	
 func set_tab_p2():
@@ -194,7 +180,7 @@ func _on_conf2_confirmed():
 		player = 2
 		pronto = true
 	elif player == 2 and not pronto2:
-		gIsOn = true
+		global.gIsOn = true
 		pronto2 = true
 		pLabel.set_text("Player 1")
 		pLabel.set("custom_colors/font_color", Color(0,0,1))
@@ -203,7 +189,25 @@ func _on_conf2_confirmed():
 
 
 
-func game_loop(player):
+func game_loop(player):	
 	abreTab(player)
 
-	
+
+
+#           @TODO: IMPLEMENTAR can_drop_data p/ game_loop()
+#           limitações:
+#           if peca pertence à player:
+#           	if not (bomba, flag)
+#           		if mov->tabuleiro:
+#           			if posDestino pertence ao quadrado de vizinhança:
+#           				if posDestino == inimigo:
+#           					return combate(pecaAtual,pecaDestino)
+#           				elif posDestino == vazio:
+#           					return move(peca, posDestino)					
+#           			elif é scout && movScoutÉválido(peca):
+#           				if posDestino == inimigo:
+#           					return combate(pecaAtual,pecaDestino)
+#           				elif posDestino == vazio:
+#           					return move(peca, posDestino)	
+#           
+#           return false
