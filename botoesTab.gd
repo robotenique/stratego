@@ -22,20 +22,42 @@ func get_drag_data(pos):
 	var data = [btn, texture, get_parent().get_name(), player, get_name()]
 	return data
 
+func isVizinho(data, destL, destPec, isScout):
+	var dl = int(destL[5])
+	var dc = int(destPec[1])
+	var ol = int(data[2][5])
+	var oc = int(data[4][1])
+
+	if not isScout:
+		if dl = ol - 1 and dc = oc:
+			return true;
+		elif dl = ol and dc = ol + 1:
+			return true;
+		elif dl = ol + 1 and dc = oc:
+			return true;
+		elif dl = ol and dc = ol - 1:
+			return true;
+		else:
+			return false;
+			
+			
 
 
 func can_drop_gState(pos, data, destL, destPec):
 	# Origin and destination mTab instance
 	var mTab_o = 0
-	var mTab_d = 0
+	var mTab_d = 0	
 	if data[3] == 1:		
-		if not(data[2][0]=="p"):			
+		if not(data[2][0]=="p" and destL[0]=="l"):			
 			# Gets the data from mTab of the given button
 			mTab_o = global.mTab[int(data[2][5])][int(data[4][1])]
 			mTab_d = global.mTab[int(destL[5])][int(destPec[1])]
 			if(mTab_o[2] == 1 and mTab_d[2] != 1):
-				if(not((mTab_o[0] == load("res://pB.png"))+(mTab_o[0] == load("res://pF.png")))):
-					pass
+				if not((mTab_o[0] == load("res://pB.png"))+(mTab_o[0] == load("res://pF.png"))):
+					if isVizinho(data, destL, destPec, false):
+						pass
+					elif mTab_o[0] == load("res://p2.png") and isVizinho(data, destL, destPec, true):
+						pass
 	else:
 		pass
 
