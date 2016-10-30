@@ -61,8 +61,6 @@ func _on_confirmacao_confirmed():
 	var popup2 = get_node("MudarPlayerBtn/conf2")
 	var pLabel = get_node("PlayerLabel")
 	var player = int(pLabel.get_text()[7])
-	#CRIANDO TABULEIRO
-	#O B DEVERIA SER UMA VARIAVEL STATIC P/ EXECUTAR A CRIAÇÃO DO TABULEIRO APENAS UMA VEZ!
 	if (not pronto):
 		if (not criado):
 			for i in range(10):
@@ -140,6 +138,7 @@ func _on_rND_pressed():
 				k += 1
 
 func set_tab_p2():
+	# Mannually setting each tile for player 2
 	get_node(str("pecas1/peca1")).set_normal_texture(load("res://qF.png"))
 	get_node(str("pecas2/peca1")).set_normal_texture(load("res://q1.png"))
 	get_node(str("pecas3/peca1")).set_normal_texture(load("res://q9.png"))

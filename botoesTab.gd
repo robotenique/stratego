@@ -69,6 +69,7 @@ func isVizinho(data, destL, destPec, isScout):
 	return not(flag)
 
 
+
 # @TODO: CORRIGIR SWAPPEC, POIS ESTA TROCANDO ERRADO!!!
 # as vezes nao esta trocando, verificar
 func swapPec(ol, oc, dl, dc):
@@ -129,6 +130,7 @@ func can_drop_gState(pos, data, destL, destPec):
 	else:
 		pass
 
+# Só é chamada para montar o tabuleiro
 func can_drop_data(pos, data,destL):
 	var isButton = typeof(data[0])==18
 	#Verificando para player1
