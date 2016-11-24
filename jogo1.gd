@@ -8,8 +8,8 @@ var pLabel = 0
 var pConf = 0
 var pPop = 0
 var pPopError = 0
+var pConf2 = 0
 
-var tt = "KAKAKAKAKAKJ"
 var criado = false
 var pronto = false
 
@@ -23,17 +23,15 @@ func _on_VoltarBtn_pressed():
 
 
 func _on_MudarPlayerBtn_pressed():
-	#TODO: CONFIGURAR POPUPDIALOG!
-	#var sd = get_node("MudarPlayerBtn/PopupMenu")
-	#sd.add_icon_item(load("res://p1.png"),"ATTAAAAAA")
-	#sd.popup_centered()
-	print("MUDOU")
 	pLabel = get_node("PlayerLabel")
 	pConf = get_node("MudarPlayerBtn")
 	pPop = get_node("MudarPlayerBtn/confirmacao")
 	pPopError = get_node("MudarPlayerBtn/erroDialog")
 	var player = int(pLabel.get_text()[7])
-	if verificaTab(player):
+	print("GTOGGLE = ",global.toggle)
+	if verificaTab(player) and not global.gIsOn:
+		pPop.popup_centered()
+	elif global.gIsOn and global.toggle:
 		pPop.popup_centered()
 	else:
 		pPopError.popup_centered()
@@ -42,7 +40,7 @@ func _on_MudarPlayerBtn_pressed():
 func abreTab(player):
 	for i in range(10):
 		for j in range(10):
-			if(global.mTab[i][j][2]==player):
+			if(global.mTab[i][j][2] == player):
 				global.mTab[i][j][1].set_normal_texture(global.mTab[i][j][0])
 
 
@@ -137,6 +135,46 @@ func _on_rND_pressed():
 				global.mTab[i][j][1].set_normal_texture(t[k])
 				k += 1
 
+func hideSelGrid():
+	# Mannually setting each tile for player 2
+	get_node(str("pecas1/peca1")).set_hidden(true)
+	get_node(str("pecas2/peca1")).set_hidden(true)
+	get_node(str("pecas3/peca1")).set_hidden(true)
+	get_node(str("pecas4/peca1")).set_hidden(true)
+
+	for i in range(5,7):
+		get_node(str("pecas",i,"/peca1")).set_hidden(true)
+	for i in range(7,10):
+		get_node(str("pecas",i,"/peca1")).set_hidden(true)
+	for i in range(10,14):
+		get_node(str("pecas",i,"/peca1")).set_hidden(true)
+	for i in range(14,18):
+		get_node(str("pecas",i,"/peca1")).set_hidden(true)
+	for i in range(18,22):
+		get_node(str("pecas",i,"/peca1")).set_hidden(true)
+	for i in range(22,27):
+		get_node(str("pecas",i,"/peca1")).set_hidden(true)
+	for i in range(27,35):
+		get_node(str("pecas",i,"/peca1")).set_hidden(true)
+	for i in range(35,41):
+		get_node(str("pecas",i,"/peca1")).set_hidden(true)
+
+func createStableID():
+	global.stable_ID = [
+											[[load("res://qF.png") , load("res://pF.png")],
+											 [load("res://qB.png") , load("res://pB.png")],
+											 [load("res://q1.png") , load("res://p1.png")],
+											 [load("res://q2.png") , load("res://p2.png")],
+											 [load("res://q3.png") , load("res://p3.png")],
+											 [load("res://q4.png") , load("res://p4.png")],
+											 [load("res://q5.png") , load("res://p5.png")],
+											 [load("res://q6.png") , load("res://p6.png")],
+											 [load("res://q7.png") , load("res://p7.png")],
+											 [load("res://q8.png") , load("res://p8.png")],
+											 [load("res://q9.png") , load("res://p9.png")]],
+											[-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]
+
+
 func set_tab_p2():
 	# Mannually setting each tile for player 2
 	get_node(str("pecas1/peca1")).set_normal_texture(load("res://qF.png"))
@@ -163,25 +201,44 @@ func set_tab_p2():
 
 func _on_conf2_confirmed():
 	var player = int(pLabel.get_text()[7])
-	pConf.set_text("Começar jogo!")
-	pPop.set_text("Iniciar jogo agora?!")
-	var pronto = false
-	var pronto2 = false
-	if player == 1 and not pronto:
+	if not global.pronto :
+		pConf.set_text("Começar jogo!")
+		pPop.set_text("Iniciar jogo agora?!")
+	if player == 1 and not global.pronto:
 		set_tab_p2()
 		pLabel.set_text("Player 2")
 		pLabel.set("custom_colors/font_color", Color(1,0,0))
 		player = 2
-		pronto = true
-	elif player == 2 and not pronto2:
+		global.pronto = true
+	elif player == 2 and not global.pronto2:
 		global.gIsOn = true
-		pronto2 = true
+		global.pronto2 = true
+		pConf = get_node("MudarPlayerBtn")
+		pPop.set_text("Estás pronto?!")
+		pConf.set_text("Passar para o próximo!")
+		pConf2 = get_node("MudarPlayerBtn/conf2")
+		pConf2.set_text("Passe para o outro player!")
+		pPopError = get_node("MudarPlayerBtn/erroDialog")
+		pPopError.set_text("Faça um movimento!")
 		pLabel.set_text("Player 1")
 		pLabel.set("custom_colors/font_color", Color(0,0,1))
 		player = 1
+		hideSelGrid()
+		createStableID()
+		game_loop(player)
+	elif player == 1 :
+		player = 2
+		pLabel.set_text("Player 2")
+		pLabel.set("custom_colors/font_color", Color(1,0,0))
+		game_loop(player)
+	elif player == 2:
+		player = 1
+		pLabel.set_text("Player 1")
+		pLabel.set("custom_colors/font_color", Color(0,0,1))
 		game_loop(player)
 
 
 
 func game_loop(player):
+	global.toggle = 0
 	abreTab(player)
