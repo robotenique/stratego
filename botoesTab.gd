@@ -74,6 +74,8 @@ func isVizinho(data, destL, destPec, isScout):
 # 0 = bomb
 func getID(texture):
 	var count = 0
+	if texture == load("res://hitlao.jpg") or texture == load("res://stalindo.jpg"):
+		return 10
 	for x in global.stable_ID[0]:
 		if texture == x[0] or texture == x[1]:
 			return  global.stable_ID[1][count]
@@ -94,43 +96,42 @@ func combate(mTab_o, mTab_d, data, ol, oc, dl, dc):
 	print("po = ",po," pd = ",pd)
 	if pd == 0:
 		if po == 3:
+			setCombatLog(po, pd, ol, oc, dl, dc, 1, 2, 0)
 			destroy(dl, dc)
 			swapPec(ol, oc, dl, dc)
-			# setCombatLog("pecaDestino morreu")
 		else:
+			setCombatLog(po, pd, ol, oc, dl, dc, 0, 1, 0)
 			destroy(ol, oc)
 			global.mTab[ol][oc][1].set_normal_texture(tile)
-			# setCombatLog("pecaOrigem morreu")
 	elif pd == -1:
 		return false;
 	elif po > pd:
-		if po == 9 and pd == 1:
+		if po == 10 and pd == 1:
+			setCombatLog(po, pd, ol, oc, dl, dc, 0, 0, 1)
 			destroy(ol, oc)
 			global.mTab[ol][oc][1].set_normal_texture(tile)
-			# setCombatLog("pecaOrigem morreu")
 		else:
+			setCombatLog(po, pd, ol, oc, dl, dc, 1, 0, 0)
 			destroy(dl, dc)
 			swapPec(ol, oc, dl, dc)
-			# setCombatLog("pecaDestino morreu")
 	elif po < pd:
-		if po == 1 and pd == 9:
+		if po == 1 and pd == 10:
+			setCombatLog(po, pd, ol, oc, dl, dc, 1, 0, 2)
 			destroy(dl, dc)
 			swapPec(ol, oc, dl, dc)
-			# setCombatLog("pecaDestino morreu")
 		else:
+			setCombatLog(po, pd, ol, oc, dl, dc, 0, 0, 0)
 			destroy(ol, oc)
 			global.mTab[ol][oc][1].set_normal_texture(tile)
-			# setCombatLog("pecaOrigem morreu")
+			combatResults_attack()
 	else:
+		setCombatLog(po, pd, ol, oc, dl, dc, 2, 0, 0)
 		destroy(dl, dc)
 		destroy(ol, oc)
 		swapPec(ol, oc, dl, dc)
-		#setCombatLog("ambas morreram")
-
+	combatResults_attack()
 	return true
 
-
-#
 #		if pecaDestino == bomba:
 #			if pecaOrigem == 3:
 #				pecaDestino(mTab) = blank && setCombatLog("pecaDestino morreu")
@@ -156,6 +157,53 @@ func combate(mTab_o, mTab_d, data, ol, oc, dl, dc):
 #			pecaDestino(mTab) = blank
 #			swapPec(pecaOrigem, pecaDestino)
 #	return true
+
+
+func combatResults_attack():
+	var pPopCombat = get_tree().get_root().get_node("Control/combatDialog")
+	var combatString = 0
+	if global.combatLog[5]: #uma bomba esta envolvida
+		if global.combatLog[5] == 1: #atacante morre pra bomba
+			if global.combatLog[1] == 10: #atacante é general e morre para bomba
+				combatString = str("Aaaah, minas terrestres! Nosso general está morto!")
+			else: #atacante não é general e morre para a bomba
+				combatString = str("Aaah! A sua peça ", global.combatLog[0], " explodiu em uma mina do adverário!")
+		else: #atacante é sapper e mata a bomba
+			combatString = str("Ahá! Nosso engenheiro (3) desarmou uma mina inimiga!") 
+	elif global.combatLog[6]: #um general está envolvido e não é bomba
+		if global.combatLog[6] == 1: #general atacante morre pra spy
+			combatString = str("Nosso general foi assassinado por um espião inimigo!\nO que faremos sem sua liderança?") 
+		else: #spy mata general
+			combatString = str("A operação foi um sucesso! Nosso espião neutralizou o\ngeneral inimigo!")
+	elif global.combatLog[4] == 0: #peça morre para defensor que não é bomba
+		if global.combatLog[1] == 10: #peça morre para general
+			combatString = str("Oh não! A sua peça ", global.combatLog[0], " foi derrotada pelo poderoso general\ninimigo.")
+		else:
+			combatString = str("Oh não! A sua peça ", global.combatLog[0], " perdeu o combate contra uma\npeça adversária ", global.combatLog[1], ".")
+	elif global.combatLog[4] == 1:
+		if global.combatLog[0] == 10:
+			combatString = str("Nosso general derrotou uma peça ", global.combatLog[1], " inimiga.")
+		else:
+			combatString = str("A batalha foi vencida! A sua peça ", global.combatLog[0], " derrotou em\ncombate uma peça ", global.combatLog[1], " adversária.")
+	else:
+		if global.combatLog[0] == 10 and global.combatLog[1] == 10:
+			combatString = str("Oh não! Ambos os generais estão mortos!")
+		else:
+			combatString = str("Uma batalha custosa! A sua peça ", global.combatLog[0], " derrotou em combate\numa peça adversária ", global.combatLog[1], ", mas também está fora de\ncombate.")
+	pPopCombat.set_text(combatString)
+	pPopCombat.popup_centered()
+
+# status = 0 se peça de origem morre, 1 se peça de destino morre e 2 se ambas morrem
+func setCombatLog(po, pd, ol, oc, dl, dc, status, bomb, general):
+	global.combatLog[0] = po
+	global.combatLog[1] = pd
+	global.combatLog[2] = dl
+	global.combatLog[3] = dc
+	global.combatLog[4] = status
+	global.combatLog[5] = bomb
+	global.combatLog[6] = general
+	global.combatLog[7] = ol
+	global.combatLog[8] = oc
 
 func swapPec(ol, oc, dl, dc):
 	var textO = global.mTab[ol][oc][0]
@@ -188,7 +236,7 @@ func can_drop_gState(pos, data, destL, destPec):
 	# Origin and destination mTab instance
 	var mTab_o = 0
 	var mTab_d = 0
-
+	var pPopFim = get_tree().get_root().get_node("Control/endDialog")
 	if global.toggle == 0:
 		if data[3] == 1:
 			print("PASS 1");
@@ -215,7 +263,9 @@ func can_drop_gState(pos, data, destL, destPec):
 								if(combate(mTab_o, mTab_d, data, int(data[2][5]), int(data[4][1]), int(destL[5]), int(destPec[1]))):
 									global.toggle = 2
 								else: # the game is over
-									pass
+									abreTab(1)
+									abreTab(2)
+									pPopFim.popup_centered()
 							else:
 								swapPec(int(data[2][5]), int(data[4][1]), int(destL[5]), int(destPec[1]));
 								global.toggle = 1
@@ -244,7 +294,7 @@ func can_drop_gState(pos, data, destL, destPec):
 								if(combate(mTab_o, mTab_d, data, int(data[2][5]), int(data[4][1]), int(destL[5]), int(destPec[1]))):
 									global.toggle = 2
 								else: # the game is over
-									pass
+									pPopFim.popup_centered()
 							else:
 								swapPec(int(data[2][5]), int(data[4][1]), int(destL[5]), int(destPec[1]));
 								global.toggle = 1
@@ -252,7 +302,7 @@ func can_drop_gState(pos, data, destL, destPec):
 			pass
 
 # Só é chamada para montar o tabuleiro
-func can_drop_data(pos, data,destL):
+func can_drop_data(pos, data, destL):
 	var isButton = typeof(data[0])==18
 	#Verificando para player1
 	if data[3]==1:
@@ -296,8 +346,15 @@ func drop_data(pos, data):
 			data[0].set_normal_texture(txtDestino)
 	else:
 		if(can_drop_gState(pos, data, get_parent().get_name(), get_name())):
+			
 			var nome = get_name()
 			var btn = get_parent().get_child(int(nome[1]))
 			var txtDestino = btn.get_normal_texture()
 			self.set_normal_texture(data[1])
 			data[0].set_normal_texture(txtDestino)
+
+func abreTab(player):
+	for i in range(10):
+		for j in range(10):
+			if(global.mTab[i][j][2] == player):
+				global.mTab[i][j][1].set_normal_texture(global.mTab[i][j][0])

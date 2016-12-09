@@ -19,7 +19,7 @@ func _ready():
 
 
 func _on_VoltarBtn_pressed():
-	get_tree().change_scene("res://title1.scn")
+	get_tree().quit()
 
 
 func _on_MudarPlayerBtn_pressed():
@@ -64,7 +64,7 @@ func _on_confirmacao_confirmed():
 			for i in range(10):
 				global.mTab.append([])
 				for j in range(10):
-					global.mTab[i][j].append([load("res://tile.png"), get_node(str("tabuleiro/linha",i,"/p",j)), 0])
+					global.mTab[i].append([load("res://tile.png"), get_node(str("tabuleiro/linha",i,"/p",j)), 0])
 			criado = true
 		if(player==1):
 			for i in range(6,10):
@@ -110,7 +110,6 @@ func _on_rND_pressed():
 			global.mTab.append([])
 			for j in range(10):
 				global.mTab[i].append([load("res://tile.png"),get_node(str("tabuleiro/linha",i,"/p",j)),0])
-
 		var t = [];
 		for i in range(1,41):
 			t.append(get_node(str("pecas",i,"/peca1")).get_normal_texture())
@@ -224,21 +223,66 @@ func _on_conf2_confirmed():
 		pLabel.set("custom_colors/font_color", Color(0,0,1))
 		player = 1
 		hideSelGrid()
+		get_node(str("TitleLabel")).set_hidden(true)
+		get_node(str("eixo_x")).set_hidden(false)
+		get_node(str("eixo_y")).set_hidden(false)
+		get_node(str("germanyFlag")).set_hidden(false)
+		get_node(str("ussrFlag")).set_hidden(false)
 		createStableID()
 		game_loop(player)
-	elif player == 1 :
+	elif player == 1:
 		player = 2
 		pLabel.set_text("Player 2")
 		pLabel.set("custom_colors/font_color", Color(1,0,0))
+		if global.toggle == 2:
+			combatResults_afterAttack()
 		game_loop(player)
 	elif player == 2:
 		player = 1
 		pLabel.set_text("Player 1")
 		pLabel.set("custom_colors/font_color", Color(0,0,1))
+		if global.toggle == 2:
+			combatResults_afterAttack()
 		game_loop(player)
 
-
+func combatResults_afterAttack():
+	var pPopCombat = get_tree().get_root().get_node("Control/combatDialog")
+	var combatString = 0
+	if global.combatLog[5]: #uma bomba esta envolvida
+		if global.combatLog[5] == 1: #atacante morre pra bomba
+			if global.combatLog[1] == 10: #atacante é general e morre para bomba
+				combatString = str("Brilhante! Nossas minas terrestres localizadas em (x:", (10 - global.combatLog[2]) ,", y:", (1 + global.combatLog[3]) ,")\ndestruiram o general inimigo previamente localizado em (", global.combatLog[2],", ",global.combatLog[3],").") 
+			else: #atacante não é general e morre para a bomba
+				combatString = str("Excelente! Minas terrestres localizadas em (x:", (1 + global.combatLog[8]),", y:", (10 - global.combatLog[7]),")\ndestruiram uma peça ", global.combatLog[0] ," inimiga previamente localizada\nem (x:", (1 + global.combatLog[3]),", y:",(10 - global.combatLog[2]),").") 
+		else: #atacante é sapper e mata a bomba
+			combatString = str("Oh não! Nossas minas terrestres localizadas em(x:", (1 + global.combatLog[8]),", y:", (10 - global.combatLog[7]),")\nforam desarmadas por um engenheiro inimigo previamente localizado\nem (x", (1 + global.combatLog[3]),", y:",(10 - global.combatLog[2]),").")
+	elif global.combatLog[6]: #um general está envolvido e não é bomba
+		if global.combatLog[6] == 1: #general atacante morre pra spy
+			combatString = str("Nosso espião localizado em (x:", (1 + global.combatLog[8]),", y:", (10 - global.combatLog[7]),") preparou\numa armadilha e capturou o general inimigo previamente localizado\nem (x", (1 + global.combatLog[3]),", y:",(10 - global.combatLog[2]),").") 
+		else: #spy mata general
+			combatString = str("Desastre! Nosso general antes localizado em (x:", (1 + global.combatLog[8]),", y:", (10 - global.combatLog[7]),") foi\nassassinado por um espião inimigo previamente\nlocalizado em (x", (1 + global.combatLog[3]),", y:",(10 - global.combatLog[2]),").")
+	elif global.combatLog[4] == 0: #peça atacante morre para defensor que não é bomba
+		if global.combatLog[1] == 10: #peça atacante morre para general
+			combatString = str("Ahá! Nosso general localizado em (x:", (1 + global.combatLog[8]),", y:", (10 - global.combatLog[7]),") destruiu\numa peça ", global.combatLog[0] ," inimiga previamente localizada\nem (x", (1 + global.combatLog[3]),", y:",(10 - global.combatLog[2]),").")
+		else: #peça atacante morre para tropa mais forte
+			combatString = str("Ahá! Sua peça ", global.combatLog[1], " localizada em (x:", (1 + global.combatLog[8]),", y:", (10 - global.combatLog[7]),")\ndestruiu uma peça ", global.combatLog[0] ," inimiga previamente localizada\nem (x:", (1 + global.combatLog[3]),", y:",(10 - global.combatLog[2]),").")
+	elif global.combatLog[4] == 1: #peça atacante ganha de uma peça
+		if global.combatLog[0] == 10: #peça atacante é general
+			combatString = str("Derrota desastrosa! Sua peça ", global.combatLog[1], " localizada em (x:", (1 + global.combatLog[8]),", y:", (10 - global.combatLog[7]),")\nfoi destruída pelo general inimigo previamente localizado\nem (x", (1 + global.combatLog[3]),", y:",(10 - global.combatLog[2]),").")
+		else: #peça atacante é normal
+			combatString = str("Uma derrota! Sua peça ", global.combatLog[1], " localizada em (x:", (1 + global.combatLog[8]),", y:", (10 - global.combatLog[7]),")\nfoi destruída por uma peça ", global.combatLog[0] ," inimiga previamente\nlocalizada em (x", (1 + global.combatLog[3]),", y:",(10 - global.combatLog[2]),").")
+	else:
+		if global.combatLog[0] == 10 and global.combatLog[1] == 10:
+			combatString = str("Oh não! Um ataque desesperado do general inimigo\ndestruiu o nosso líder! Ao menos o líder deles\ntambém está derrotado!")
+		else:
+			combatString = str("Uma batalha custosa! Sua peça ", global.combatLog[1], " localizada em (x:", (1 + global.combatLog[8]),", y:", (10 - global.combatLog[7]),")\ndestruiu uma peça ", global.combatLog[0] ," inimiga previamente localizada\nem (x", (1 + global.combatLog[3]),", y:",(10 - global.combatLog[2]),"), mas também está fora de combate.")
+	pPopCombat.set_text(combatString)
+	pPopCombat.popup_centered()
 
 func game_loop(player):
 	global.toggle = 0
 	abreTab(player)
+
+
+func _on_endDialog_confirmed():
+	get_tree().quit()
